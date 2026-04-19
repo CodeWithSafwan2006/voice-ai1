@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+const path = require("path");
 
 const app = express();
 app.use(cors());
@@ -9,13 +10,15 @@ app.use(express.json());
 
 const apiKey = process.env.GROQ_API_KEY;
 
+// ✅ Frontend serve karo
+app.use(express.static(path.join(__dirname, "../frontend")));
+
 app.get("/", (req, res) => {
-  res.send("Server is running ✅");
+  res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
 app.post("/ask", async (req, res) => {
   const userMessage = req.body.message;
-
   try {
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
@@ -27,15 +30,13 @@ app.post("/ask", async (req, res) => {
       },
       {
         headers: {
-          "Authorization": `Bearer ${apiKey}`, // ✅ FIXED
+          "Authorization": `Bearer ${apiKey}`,
           "Content-Type": "application/json"
         }
       }
     );
-
     const reply = response.data.choices[0].message.content;
     res.json({ reply });
-
   } catch (err) {
     console.error("GROQ ERROR:", err.response?.data || err.message);
     res.json({ reply: "Error from AI" });
