@@ -48,7 +48,7 @@ recognition.onresult = async function(event) {
 
   try {
     // Naya
-const res = await fetch("https://voice-ai1-2.onrender.com/ask", {
+const res = await fetch("https://voice-ai1.onrender.com/ask", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
